@@ -5,7 +5,7 @@ import { LoadingOverlay } from "./components/basic/Loading";
 import { ArrowLeftIcon, XCircleIcon } from "@heroicons/react/outline";
 import { Link } from "react-router-dom";
 
-export type ActionType =
+type ActionType =
   | {
       type: "UPDATE_TITLE";
       payload: string;
