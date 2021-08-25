@@ -42,14 +42,14 @@ export const useDataQuery = () => {
 };
 
 export function useCreateDataMutation(): [
-  (props: { data: Omit<Data, "id"> }) => any,
+  (props: { data: Omit<Data, "id"> }) => Promise<any>,
   { loading: boolean }
 ] {
   const [, setData] = useContext(FakeAPIContext);
   const { load, loading } = useFakeLoading();
   return [
     async ({ data }) => {
-      load().then(() => {
+      await load().then(() => {
         setData((prev) => [...prev, { ...data, id: uuid() }]);
       });
     },
