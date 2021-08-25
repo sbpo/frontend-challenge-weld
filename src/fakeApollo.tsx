@@ -5,24 +5,21 @@ import { createContext } from "react";
 import { v4 as uuid } from "uuid";
 
 type Data = {
-  title: string;
   id: string;
+  title: string;
+  description: string;
 };
 
-const FakeAPIContext = createContext<
-  [Data[], Dispatch<SetStateAction<Data[]>>]
->([] as unknown as [Data[], Dispatch<SetStateAction<Data[]>>]);
+const FakeAPIContext = createContext<[Data[], Dispatch<SetStateAction<Data[]>>]>(
+  [] as unknown as [Data[], Dispatch<SetStateAction<Data[]>>]
+);
 
 export const FakeAPIProvider = (props: {
   children: JSX.Element | JSX.Element[];
   initialState: Data[];
 }) => {
   const state = useState<Data[]>(props.initialState);
-  return (
-    <FakeAPIContext.Provider value={state}>
-      {props.children}
-    </FakeAPIContext.Provider>
-  );
+  return <FakeAPIContext.Provider value={state}>{props.children}</FakeAPIContext.Provider>;
 };
 
 const useFakeLoading = () => {
@@ -85,9 +82,7 @@ export function useUpdateDataMutation(): [
   return [
     ({ data, id }) => {
       load().then(() => {
-        setData((prev) =>
-          prev.map((x) => (x.id === id ? { ...x, ...data } : data))
-        );
+        setData((prev) => prev.map((x) => (x.id === id ? { ...x, ...data } : data)));
       });
     },
     { loading },
