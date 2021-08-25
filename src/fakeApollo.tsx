@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { createContext } from "react";
 import { v4 as uuid } from "uuid";
 
-type Data = {
+export type Data = {
   id: string;
   title: string;
   description: string;
@@ -23,7 +23,7 @@ export const FakeAPIProvider = (props: {
 };
 
 const useFakeLoading = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const load = useCallback(async () => {
     setLoading(true);
     await new Promise<void>((resolve) => setTimeout(() => resolve(), 1500));
