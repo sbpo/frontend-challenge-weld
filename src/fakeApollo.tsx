@@ -26,7 +26,7 @@ const useFakeLoading = () => {
   const [loading, setLoading] = useState(false);
   const load = useCallback(async () => {
     setLoading(true);
-    await new Promise<void>((resolve) => setTimeout(() => resolve(), 15));
+    await new Promise<void>((resolve) => setTimeout(() => resolve(), 1500));
     setLoading(false);
   }, []);
   return { load, loading };
@@ -39,6 +39,19 @@ export const useDataQuery = () => {
     load();
   }, [load]);
   return { data: loading ? null : data, loading };
+};
+
+export const useDataByID = (id: string) => {
+  const [data] = useContext(FakeAPIContext);
+  const { load, loading } = useFakeLoading();
+  const [queryResult, setQueryResult] = useState<Data | null>(null);
+
+  useEffect(() => {
+    load().then(() => {
+      setQueryResult(data.find((d) => d.id === id) || null);
+    });
+  }, [load, id, data]);
+  return { data: queryResult, loading };
 };
 
 export function useCreateDataMutation(): [
@@ -80,9 +93,9 @@ export function useUpdateDataMutation(): [
   const [, setData] = useContext(FakeAPIContext);
   const { load, loading } = useFakeLoading();
   return [
-    ({ data, id }) => {
-      load().then(() => {
-        setData((prev) => prev.map((x) => (x.id === id ? { ...x, ...data } : data)));
+    async ({ data, id }) => {
+      await load().then(() => {
+        setData((prev) => prev.map((x) => (x.id === id ? { ...x, ...data } : x)));
       });
     },
     { loading },

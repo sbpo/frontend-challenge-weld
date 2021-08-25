@@ -5,7 +5,7 @@ import { Data, useDataQuery, useRemoveDataMutation } from "./fakeApollo";
 import { FakeAPIProvider } from "./fakeApollo";
 import { v4 as uuid } from "uuid";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "@heroicons/react/outline";
-import NewDataPage from "./NewDataPage";
+import { NewDataPage, UpdateDataPage } from "./MutateDataPage";
 import { LoadingIcon, LoadingOverlay } from "./components/basic/Loading";
 
 export default function App() {
@@ -20,6 +20,7 @@ export default function App() {
         <Switch>
           <Route exact path="/" component={Main} />
           <Route exact path="/new" component={NewDataPage} />
+          <Route path="/edit/:id" component={UpdateDataPage} />
         </Switch>
       </BrowserRouter>
     </FakeAPIProvider>
@@ -60,13 +61,13 @@ function Main() {
     return data?.slice(startIndex, startIndex + itemsPerPage);
   }, [currentPage, data, itemsPerPage]);
 
-  console.log({ currentPage, shownData });
-
   const renderDataItem = (data: Data) => {
     return (
       <li key={data.id} className="flex items-center space-x-2 my-2">
         <div>
-          <div className="font-medium">{data.title}</div>
+          <Link to={`/edit/${data.id}`} className="font-medium">
+            {data.title}
+          </Link>
           <div>{data.description}</div>
         </div>
         <button onClick={() => handleRemove(data.id)}>
