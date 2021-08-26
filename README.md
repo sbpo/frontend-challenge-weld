@@ -15,7 +15,7 @@ This repository contains my response to the frontend coding challenge from weld.
 
 #### `App.tsx`
 
-The entry point to the app containing API provider, router and renders other components.
+The entry point to the app containing API provider, router and renders main components.
 <br/>
 
 #### `components/MainDataList/MainDataList.tsx`
@@ -25,7 +25,7 @@ Component for the main page, showing the data list with pagination.
 
 #### `components/MutateData/EditDataForm.tsx`
 
-Component containing form field for creating/modifying a Data item, build using the useReducer to manage state.
+Component containing form field for creating/modifying a Data item, built using the useReducer to manage state.
 <br/>
 
 #### `components/MutateData/NewdataPage.tsx`
@@ -35,7 +35,7 @@ Component that renders the editDataform in a "Sidebar", and containing the logic
 
 #### `components/MutateData/UpdateDataPage.tsx`
 
-Component that renders the editDataform in a "Sidebar", and containing the logic forediting data data.
+Component that renders the editDataform in a "Sidebar", and containing the logic for editing data.
 <br/>
 
 #### `components/basics/..`
@@ -51,7 +51,7 @@ Contains a number of basic components needed across the application implemented.
 I started out getting an overview of the challenge, the initial bolierplate code, and the feature that should be added to solve it.
 I then started solving the steps by working from within the initial App.tsx and adding components as needed. I tried working mainly with application logic within a few files, and not thinking too much about the file structure, while tried to keep the components as simple and straightforward as possible.
 <br/><br/>
-As I build the APP I running it in the browser using it constantly, and trying to optimise first the internal logic of the components, and the overall UX of using the APP.
+As I build the APP I was running it in the browser using it constantly, and trying to optimise first the internal logic of the components, and the overall UX of using the APP.
 <br/><br/>
 I decided to put the add/edit pages in a "Slideover" component, so that the main since I thought this made the app a lot nicer to work with by always displaying the list of data.
 <br/><br/>
@@ -62,7 +62,7 @@ After having most features done, I refactored the APP splitting it into an easie
 
 - Forms are only validated very simply, by checking if fields are empty.
 - API requests do not have any error handling yet
-- I did not include any tests.
+- I did not write any tests.
   <br/><br/>
 
 ### Future work
@@ -71,4 +71,4 @@ Besides fixing the shortcomings, it would be nice to add a few extra tweaks to m
 
 - When updating data, it would be nice to show which item in the list is currently being edited.
 - When deleting an item, it would be nice to only display loading on the item being deleted.
-- It could be usefull to crate some kind of automated testing, either using unit tests of vital components, or E2E tests using something like Cypress.io
+- It could be useful to create some kind of automated testing, either using unit tests of vital components, or E2E tests using something like Cypress.io
