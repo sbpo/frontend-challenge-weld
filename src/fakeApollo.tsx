@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { createContext } from "react";
 import { v4 as uuid } from "uuid";
+import { immutableSplice } from "./utilities/immutableArray";
 
 export type Data = {
   id: string;
@@ -70,6 +71,22 @@ export function useCreateDataMutation(): [
   ];
 }
 
+export function useRestoreDataMutation(): [
+  (props: { data: Data; index: number }) => Promise<any>,
+  { loading: boolean }
+] {
+  const [, setData] = useContext(FakeAPIContext);
+  const { load, loading } = useFakeLoading();
+  return [
+    async ({ data, index }) => {
+      await load().then(() => {
+        setData((prev) => immutableSplice(prev, index, 0, data));
+      });
+    },
+    { loading },
+  ];
+}
+
 export function useRemoveDataMutation(): [
   (props: { id: string }) => any,
   { loading: boolean }
@@ -77,8 +94,8 @@ export function useRemoveDataMutation(): [
   const [, setData] = useContext(FakeAPIContext);
   const { load, loading } = useFakeLoading();
   return [
-    ({ id }) => {
-      load().then(() => {
+    async ({ id }) => {
+      await load().then(() => {
         setData((prev) => prev.filter((x) => x.id !== id));
       });
     },

@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 
-import { Data, useDataQuery, useRemoveDataMutation } from "./fakeApollo";
+import {
+  Data,
+  useDataQuery,
+  useRemoveDataMutation,
+  useRestoreDataMutation,
+} from "./fakeApollo";
 import { FakeAPIProvider } from "./fakeApollo";
 import { v4 as uuid } from "uuid";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "@heroicons/react/outline";
@@ -30,12 +35,28 @@ export default function App() {
 function Main() {
   const { data, loading: loadingData } = useDataQuery();
   const [remove, { loading: removeLoading }] = useRemoveDataMutation();
+  const [restoreData, { loading: restoreLoading }] = useRestoreDataMutation();
+
+  const [recentlyDeleted, setRecentlyDeleted] = useState<{ data: Data; index: number }[]>([]);
 
   const handleRemove = useCallback(
-    (id: string) => {
-      remove({ id });
+    (data: Data, index: number) => {
+      remove({ id: data.id }).then(() => {
+        setRecentlyDeleted((p) => [{ data, index }, ...p]);
+        setTimeout(() => {
+          setRecentlyDeleted((p) => p.filter((item) => item.data.id !== data.id));
+        }, 100000);
+      });
     },
     [remove]
+  );
+
+  const handleRestore = useCallback(
+    (item: { data: Data; index: number }) => {
+      setRecentlyDeleted((p) => p.filter((p) => p.data.id !== item.data.id));
+      restoreData(item);
+    },
+    [restoreData]
   );
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +72,7 @@ function Main() {
   useEffect(() => {
     //Make sure current page does no run out of data:
     const currrentPageFirstI = (currentPage - 1) * itemsPerPage;
-    if (data && data?.length < currrentPageFirstI) {
+    if (data && currrentPageFirstI > 0 && data?.length <= currrentPageFirstI) {
       setCurrentPage(Math.ceil(data?.length / itemsPerPage));
     }
   }, [data, currentPage, itemsPerPage]);
@@ -61,7 +82,7 @@ function Main() {
     return data?.slice(startIndex, startIndex + itemsPerPage);
   }, [currentPage, data, itemsPerPage]);
 
-  const renderDataItem = (data: Data) => {
+  const renderDataItem = (data: Data, index: number) => {
     return (
       <li key={data.id} className="flex items-center space-x-2 my-2">
         <div>
@@ -70,14 +91,14 @@ function Main() {
           </Link>
           <div>{data.description}</div>
         </div>
-        <button onClick={() => handleRemove(data.id)}>
+        <button onClick={() => handleRemove(data, index)}>
           <XIcon className="w-4 h-4" />
         </button>
       </li>
     );
   };
 
-  const renderPageNationControls = () => {
+  const renderPagenationControls = () => {
     return (
       <div className="flex items-center space-x-2 py-2">
         <button
@@ -93,6 +114,7 @@ function Main() {
         {pages.map((page) => {
           return (
             <button
+              key={page}
               onClick={() => {
                 setCurrentPage(page);
               }}
@@ -124,20 +146,57 @@ function Main() {
         <h1 className="text-2xl font-bold">Data points</h1>
         <div className="relative">
           <ul className="relative">{shownData?.map(renderDataItem)}</ul>
-          {removeLoading && <LoadingOverlay />}
+          {(removeLoading || restoreLoading) && <LoadingOverlay />}
           {loadingData && (
             <div className="py-2 flex items-center opacity-50 space-x-2">
               <span className="italic">Loading data</span> <LoadingIcon />
             </div>
           )}
-
-          {pages.length > 1 && renderPageNationControls()}
+          {pages.length > 1 && renderPagenationControls()}
         </div>
 
         <Link to="/new" className="text-sm underline">
           Add new
         </Link>
       </div>
+      <DeletedItemsNotifications recentlyDeleted={recentlyDeleted} restore={handleRestore} />
     </div>
   );
 }
+
+const DeletedItemsNotifications: React.FC<{
+  recentlyDeleted: { data: Data; index: number }[];
+  restore: (item: { data: Data; index: number }) => void;
+}> = ({ recentlyDeleted, restore }) => {
+  return (
+    <div className="fixed bottom-0 mb-4 right-0 mr-6 flex flex-col space-y-2 w-48">
+      {recentlyDeleted.map((item) => {
+        return (
+          <div className="flex items-center shadow-lg bg-gray-500 text-white border border-gray-600 rounded">
+            <div className="text-xs px-2 flex-grow ">{item.data.title} deleted</div>
+            <button
+              className="hover:bg-gray-600 rounded-r py-1 border-l border-gray-600 px-1"
+              onClick={() => restore(item)}
+            >
+              <UndoIcon />
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const UndoIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg
+    className={className || ""}
+    fill={"currentColor"}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path fill="none" d="M0 0h24v24H0V0z"></path>
+    <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L3.71 8.71C3.08 8.08 2 8.52 2 9.41V15c0 .55.45 1 1 1h5.59c.89 0 1.34-1.08.71-1.71l-1.91-1.91c1.39-1.16 3.16-1.88 5.12-1.88 3.16 0 5.89 1.84 7.19 4.5.27.56.91.84 1.5.64.71-.23 1.07-1.04.75-1.72C20.23 10.42 16.65 8 12.5 8z"></path>
+  </svg>
+);
