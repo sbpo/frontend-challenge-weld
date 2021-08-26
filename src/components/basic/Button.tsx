@@ -6,7 +6,7 @@ export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = (
   return (
     <button
       {...htmlProps}
-      className={`bg-white py-1 px-2 shadow rounded border border-gray-200 text-xs focus:outline-none hover:font-medium focus:ring focus:ring-blue-400 ${
+      className={`className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" ${
         className || ""
       }`}
     >

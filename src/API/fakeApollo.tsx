@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { createContext } from "react";
 import { v4 as uuid } from "uuid";
-import { immutableSplice } from "./utilities/immutableArray";
+import { immutableSplice } from "../utilities/immutableArray";
 
 export type Data = {
   id: string;
@@ -63,7 +63,7 @@ export function useCreateDataMutation(): [
   const { load, loading } = useFakeLoading();
   return [
     async ({ data }) => {
-      await load().then(() => {
+      return load().then(() => {
         setData((prev) => [...prev, { ...data, id: uuid() }]);
       });
     },
@@ -79,7 +79,7 @@ export function useRestoreDataMutation(): [
   const { load, loading } = useFakeLoading();
   return [
     async ({ data, index }) => {
-      await load().then(() => {
+      return load().then(() => {
         setData((prev) => immutableSplice(prev, index, 0, data));
       });
     },
@@ -95,7 +95,7 @@ export function useRemoveDataMutation(): [
   const { load, loading } = useFakeLoading();
   return [
     async ({ id }) => {
-      await load().then(() => {
+      return load().then(() => {
         setData((prev) => prev.filter((x) => x.id !== id));
       });
     },
@@ -111,7 +111,7 @@ export function useUpdateDataMutation(): [
   const { load, loading } = useFakeLoading();
   return [
     async ({ data, id }) => {
-      await load().then(() => {
+      return load().then(() => {
         setData((prev) => prev.map((x) => (x.id === id ? { ...x, ...data } : x)));
       });
     },

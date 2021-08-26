@@ -1,10 +1,8 @@
 import React, { useMemo, useReducer } from "react";
-import { Data, useCreateDataMutation, useDataByID, useUpdateDataMutation } from "./fakeApollo";
-import { Button } from "./components/basic/Button";
-import { LoadingOverlay } from "./components/basic/Loading";
-import { ArrowLeftIcon, XCircleIcon } from "@heroicons/react/outline";
-import { Link, useParams } from "react-router-dom";
-import { useCallback } from "react";
+import { Data } from "../../API/fakeApollo";
+import { Button } from "../basic/Button";
+import { LoadingOverlay } from "../basic/Loading";
+import { XCircleIcon } from "@heroicons/react/outline";
 
 type ActionType =
   | {
@@ -43,7 +41,7 @@ const reducer: NewDataReducer = (state: Omit<Data, "id">, action: ActionType) =>
   }
 };
 
-const EditData: React.FC<{
+const EditDataForm: React.FC<{
   startData: Omit<Data, "id">;
   isNew: boolean;
   loading: boolean;
@@ -58,17 +56,12 @@ const EditData: React.FC<{
   }, [state.description, state.title]);
 
   return (
-    <div>
-      <Link to="/" className="flex items-center space-x-2 focus:outline-none text-xs mb-2">
-        <ArrowLeftIcon className="h-3 w-3" />
-        <span>Go back</span>
-      </Link>
-      <h1 className="text-2xl font-bold mb-4"> {isNew ? "Add data" : "Update data"}</h1>
-      <div className="relative">
-        <div>Title</div>
+    <div className="relative h-full flex flex-col">
+      <div className="flex-1">
+        <div className="mb-1">Title</div>
         <div className="relative">
           <input
-            className="px-2 py-1 outline-none border rounded focus:ring focus:ring-blue-400 mb-4 w-64"
+            className="px-2 py-1 outline-none border rounded focus:ring focus:ring-offset-2 focus:ring-indigo-400 w-full"
             value={state.title}
             onChange={(e) => {
               dispatch({ type: "UPDATE_TITLE", payload: e.target.value });
@@ -86,11 +79,11 @@ const EditData: React.FC<{
           )}
         </div>
 
-        <div>Description</div>
+        <div className="mb-1 mt-4">Description</div>
         <div className="relative">
           <textarea
             rows={5}
-            className="px-2 py-1 outline-none border rounded focus:ring focus:ring-blue-400 w-64"
+            className="px-2 py-1 outline-none border rounded focus:ring focus:ring-offset-2 focus:ring-indigo-400 w-full"
             value={state.description}
             onChange={(e) => {
               dispatch({ type: "UPDATE_DESCRIPTION", payload: e.target.value });
@@ -107,8 +100,10 @@ const EditData: React.FC<{
             </button>
           )}
         </div>
+      </div>
+      <div>
         <Button
-          className={`mt-4 ${formValidation ? "" : "opacity-50"}`}
+          className={`mt-4 ${formValidation ? "" : "opacity-75"}`}
           onClick={() => {
             if (!formValidation) {
               alert("Form invalid");
@@ -123,62 +118,13 @@ const EditData: React.FC<{
         >
           {isNew ? "Add item" : "Update item"}
         </Button>
-        {loading && <LoadingOverlay />}
       </div>
+      {loading && <LoadingOverlay />}
     </div>
   );
 };
 
-export const NewDataPage = () => {
-  const [createData, { loading }] = useCreateDataMutation();
-
-  const handleCreateData = useCallback(
-    async (data: Omit<Data, "id">) => {
-      return createData({ data });
-    },
-    [createData]
-  );
-
-  return (
-    <div className="flex items-center justify-center min-h-screen relative">
-      <EditData
-        startData={{ description: "", title: "" }}
-        isNew={true}
-        handleCommit={handleCreateData}
-        loading={loading}
-      />
-    </div>
-  );
-};
-
-export const UpdateDataPage = () => {
-  const [updateData, { loading }] = useUpdateDataMutation();
-
-  const { id } = useParams<{ id: string }>();
-
-  const { data, loading: dataLoading } = useDataByID(id);
-
-  const handleUpdateData = useCallback(
-    async (data: Omit<Data, "id">) => {
-      return updateData({ data: { ...data, id }, id });
-    },
-    [updateData, id]
-  );
-  return (
-    <div className="flex items-center justify-center min-h-screen relative">
-      {data && (
-        <EditData
-          loading={loading}
-          startData={data}
-          isNew={false}
-          handleCommit={handleUpdateData}
-        />
-      )}
-      {dataLoading && <LoadingOverlay />}
-      {!dataLoading && !data && <div className="text-red-500">Error finding data</div>}
-    </div>
-  );
-};
+export default EditDataForm;
 
 const validateFormField = (text: string) => {
   return text.length > 0;
