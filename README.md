@@ -1,32 +1,67 @@
-# Welcome to Weld's frontend coding-challenge
+# Weld's frontend coding-challenge solution
 
-## Introduction
+This repository contains my response to the frontend coding challenge from weld. I have solved all tasks described in the assignmend. I have not used any dependencies or tools outside the one's supplied in the initial code.
 
-At Weld we use TypeScript, [Create React App](https://create-react-app.dev/), [TailwindCSS](https://tailwindcss.com/) and [Apollo GraphQL](https://www.apollographql.com/) for our frontend application, so this project also reflects that. On our back-end we use NestJS.
+## How to run
 
-Fork this repository and create your own repository to get started.
+#### `yarn install`
 
-## Challenge
+#### `yarn start`
 
-You will build a few new features on the app in the repository. The app currently shows a list of data points that each has two fields: text and id. It uses a fake api inspired by Apollo located in src/fakeApollo.tsx. Right now the app only supports showing and removing of data points.
+<br/>
+<br/>
 
-### Steps in challenge
+## App structure
 
-- Add a description field to the data points
-- The fake internet speed in the fake api is pretty slow, so some loading states might be needed
-- Make the app support adding of new data points through another page on /new (use useReducer for managing the internal state of this page) (use react-router-dom for routing)
-- It should be possible to clear any field with a click on a button
-- The form should be validated
-- If you add a lot of data points to the list, it would probably be nice with some pagination
-- The app should also support editing the title and description of the data points on the route /edit/:id
-- When deleting a data point, it should be possible to regret and restore it within 10 seconds in some way
-- Make a components structure that you think makes sense for the app
-- Use tailwindcss for styling, don't write any custom css
+#### `App.tsx`
 
-## How we evaluate
+The entrypoint to the app containing API provider, router and renders other components.
+<br/>
 
-The test is solely for you to show techniques and design patterns you normally use. Once the techniques and design patterns have been demonstrated then that is enough. No neeed for additional boilerplate. Just include a future work section in your answer and we will include questions in the technical interview.
+#### `components/MainDataList/MainDataList.tsx`
 
-- We understand that this can be **time consuming**. If you are short on time - then leave something out. But be sure to tell us your approach to the problem in the documentation.
-- A documented answer that explains your approach, short-comings, how-to-run and future work.
-- We appreciate small commits with a trail of messages that shows us how you work.
+Component for the main page, showing the data list with pagenation.
+<br/>
+
+#### `components/MutateData/EditDataForm.tsx`
+
+Component containing form field for creating/modifying a Data item, build using the useReducer to manage state.
+<br/>
+
+#### `components/MutateData/NewdataPage.tsx`
+
+Component rendering the editDataform in a SlideOver-page and
+<br/>
+
+#### `components/basics/..`
+
+Contains a number of basic components needed across the application implemented.
+<br/>
+
+<br/>
+<br/>
+
+## My approach
+
+I started out getting an overview of the challenge, the initial bolierplate code, and the feature that should be added to solve it.
+I then started solving the steps by working from within the initial App.tsx and adding components as needed. I tried working mainly with application logic within a few files, and not thinking too much about the file structure, while tried to keep the components as simple and straight forward as possible.
+<br/><br/>
+As I build the APP I running it in the browser using it constantly, and trying to optimise first the internal logic of the components, and the overall UX of using the APP.
+<br/><br/>
+I decided to put the add/edit pages in a "Slideover" component, so that the main since I thought this made the app alot nicer to work with by always displaying the list of data.
+<br/><br/>
+After having most features done, I refactored the APP splitting it into a more easy to approach file structure.
+<br/><br/>
+
+### Short commings
+
+- Forms are only validated very simply, by checking if fields are empty.
+- API requests do not have any error handling yet
+  <br/><br/>
+
+### Future work
+
+Besides fixing the short commings, it would be nice to add a few extra tweeks to make the UI nicer to work with:
+
+- When updating data, it would be nice to show which item in the list is currently being edited.
+- When deleting an item, it would be nice to only display loading on the item being deleted.
