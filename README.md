@@ -30,7 +30,12 @@ Component containing form field for creating/modifying a Data item, build using 
 
 #### `components/MutateData/NewdataPage.tsx`
 
-Component rendering the editDataform in a SlideOver-page and
+Component that renders the editDataform in a "Sidebar", and containing the logic for saving data.
+<br/>
+
+#### `components/MutateData/UpdateDataPage.tsx`
+
+Component that renders the editDataform in a "Sidebar", and containing the logic forediting data data.
 <br/>
 
 #### `components/basics/..`
@@ -57,6 +62,7 @@ After having most features done, I refactored the APP splitting it into an easie
 
 - Forms are only validated very simply, by checking if fields are empty.
 - API requests do not have any error handling yet
+- I did not include any tests.
   <br/><br/>
 
 ### Future work
@@ -65,3 +71,4 @@ Besides fixing the shortcomings, it would be nice to add a few extra tweaks to m
 
 - When updating data, it would be nice to show which item in the list is currently being edited.
 - When deleting an item, it would be nice to only display loading on the item being deleted.
+- It could be usefull to crate some kind of automated testing, either using unit tests of vital components, or E2E tests using something like Cypress.io
